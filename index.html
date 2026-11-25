@@ -3,25 +3,19 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0f172a">
 <title>MyFinance Family</title>
 <style>
 :root{
-  --navy:#0f172a;
-  --blue:#2563eb;
-  --blue2:#3b82f6;
-  --bg:#f1f5f9;
-  --white:#fff;
-  --text:#1e293b;
-  --muted:#64748b;
-  --green:#16a34a;
-  --red:#dc2626;
-  --border:#e2e8f0;
+--navy:#0f172a;--blue:#2563eb;--blue2:#3b82f6;
+--bg:#f1f5f9;--white:#fff;--text:#1e293b;
+--muted:#64748b;--green:#16a34a;--red:#dc2626;
+--border:#e2e8f0;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);font-family:Inter,Arial,sans-serif;color:var(--text)}
-button,input,select,textarea{font:inherit}
+body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:var(--text)}
+button,input,select{font:inherit}
 button{cursor:pointer}
 .hidden{display:none!important}
 .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#0f172a,#1e40af)}
@@ -29,24 +23,20 @@ button{cursor:pointer}
 .brand{font-size:25px;font-weight:800;color:var(--navy);letter-spacing:-1px}
 .brand span{color:var(--blue)}
 .auth-sub{color:var(--muted);font-size:14px;margin:8px 0 25px}
-.field{margin:15px 0}
+.field{margin:13px 0}
 .field label{display:block;font-size:13px;font-weight:700;margin-bottom:7px}
-.field input,.field select,.field textarea{
- width:100%;padding:13px 14px;border:1px solid var(--border);
- border-radius:11px;outline:none;background:white;color:var(--text)
-}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2563eb18}
+.field input,.field select{width:100%;padding:13px 14px;border:1px solid var(--border);border-radius:11px;outline:none;background:white;color:var(--text)}
+.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2563eb18}
 .btn{border:0;border-radius:11px;padding:12px 17px;font-weight:700;transition:.2s}
 .btn-primary{background:var(--blue);color:white}
 .btn-primary:hover{background:#1d4ed8}
 .btn-light{background:#eff6ff;color:var(--blue)}
 .btn-dark{background:var(--navy);color:white}
-.btn-danger{background:#fee2e2;color:#b91c1c}
 .btn-block{width:100%}
+.btn:disabled{opacity:.6;cursor:not-allowed}
 .auth-switch{text-align:center;font-size:13px;color:var(--muted);margin-top:20px}
 .auth-switch a{color:var(--blue);font-weight:700;cursor:pointer}
 .auth-error{color:var(--red);font-size:13px;margin-top:12px}
-.app{min-height:100vh}
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:250px;background:var(--navy);padding:25px 17px;color:white;z-index:10;display:flex;flex-direction:column}
 .sidebar .brand{color:white;margin:0 10px 35px}
 .sidebar .brand span{color:#60a5fa}
@@ -64,8 +54,7 @@ button{cursor:pointer}
 .stat-label{font-size:12px;color:var(--muted);font-weight:700}
 .stat-value{font-size:24px;font-weight:800;margin-top:12px;letter-spacing:-.7px;overflow-wrap:anywhere}
 .stat-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#eff6ff;font-size:19px;margin-bottom:14px}
-.green{color:var(--green)}
-.red{color:var(--red)}
+.green{color:var(--green)}.red{color:var(--red)}
 .section{margin-top:22px}
 .section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
 .section-title{font-size:16px;font-weight:800}
@@ -89,47 +78,52 @@ tr:last-child td{border-bottom:0}
 .member-email{font-size:11px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
 .invite-code{font-size:24px;letter-spacing:4px;font-weight:900;color:var(--blue);background:#eff6ff;padding:17px;border-radius:12px;text-align:center;margin:14px 0}
 .notice{padding:13px 15px;background:#eff6ff;color:#1e40af;border-radius:12px;font-size:12px;line-height:1.6;margin-bottom:15px}
-.mobile-menu{display:none}
 .toast{position:fixed;bottom:25px;right:25px;background:var(--navy);color:white;padding:14px 18px;border-radius:12px;z-index:50;font-size:13px;box-shadow:0 8px 30px #0003;max-width:90vw}
+.chat-area{padding:18px;min-height:250px;max-height:440px;overflow-y:auto;background:#f8fafc}
+.chat-bubble{max-width:85%;width:max-content;padding:12px 14px;border-radius:13px;margin-bottom:12px;font-size:13px;line-height:1.6;overflow-wrap:anywhere;white-space:pre-wrap}
+.chat-user{margin-left:auto;background:#dbeafe;color:#1e3a8a}
+.chat-bot{margin-right:auto;background:white;border:1px solid #e2e8f0;color:#1e293b}
+.chat-meta{text-align:right;font-size:10px;color:#64748b;margin-top:4px}
+.chat-input-area{padding:14px;border-top:1px solid var(--border);display:flex;gap:9px;background:white}
+.chat-input{flex:1;min-width:0;border:1px solid var(--border);border-radius:25px;padding:13px 16px;outline:none}
+.chat-send{border-radius:50%;width:46px;height:46px;padding:0}
+.preview-box{padding:16px;border-top:1px solid var(--border);background:white}
+.preview-summary{padding:14px;background:#eff6ff;border-radius:12px;margin-bottom:12px}
 .account-card{display:flex;justify-content:space-between;gap:12px;align-items:center}
 .account-name{font-weight:800;font-size:14px}
 .account-type{font-size:11px;color:var(--muted);margin-top:5px}
 .account-balance{font-weight:800;text-align:right}
 @media(max-width:1050px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){
- .sidebar{width:100%;height:auto;bottom:auto;right:0;padding:12px 14px;position:sticky}
- .sidebar .brand{margin:0 5px 10px;font-size:21px}
- .sidebar nav{display:flex;overflow-x:auto;gap:5px}
- .nav-label,.sidebar-bottom{display:none}
- .nav-btn{white-space:nowrap;width:auto;padding:10px 12px;font-size:12px}
- .main{margin:0;padding:19px 14px 35px}
- .topbar{align-items:flex-start}
- .page-title{font-size:21px}
- .user-pill{font-size:11px}
- .grid{gap:10px}
- .card{padding:15px}
- .stat-value{font-size:19px}
- .form-grid{grid-template-columns:1fr}
- .full{grid-column:auto}
- .panel{padding:15px}
+.sidebar{width:100%;height:auto;bottom:auto;right:0;position:sticky;padding:12px 14px}
+.sidebar .brand{margin:0 5px 10px;font-size:21px}
+.sidebar nav{display:flex;overflow-x:auto;gap:5px}
+.nav-label,.sidebar-bottom{display:none}
+.nav-btn{white-space:nowrap;width:auto;padding:10px 12px;font-size:12px}
+.main{margin:0;padding:19px 14px 35px}
+.page-title{font-size:21px}
+.user-pill{font-size:11px}
+.grid{gap:10px}
+.card{padding:15px}
+.stat-value{font-size:19px}
+.form-grid{grid-template-columns:1fr}
+.full{grid-column:auto}
+.panel{padding:15px}
 }
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="authScreen" class="auth-wrap">
  <div class="auth-card">
   <div class="brand">MyFinance<span> Family</span></div>
   <div class="auth-sub">Kelola keuangan rumah tangga bersama pasangan.</div>
-
   <div id="loginForm">
    <div class="field"><label>Email</label><input id="loginEmail" type="email" placeholder="nama@email.com" autocomplete="email"></div>
    <div class="field"><label>Password</label><input id="loginPassword" type="password" placeholder="Masukkan password" autocomplete="current-password"></div>
    <button class="btn btn-primary btn-block" onclick="login()">Masuk ke MyFinance</button>
    <div class="auth-switch">Belum punya akun? <a onclick="showRegister()">Daftar sekarang</a></div>
   </div>
-
   <div id="registerForm" class="hidden">
    <div class="field"><label>Nama lengkap</label><input id="regName" placeholder="Nama kamu"></div>
    <div class="field"><label>Email</label><input id="regEmail" type="email" placeholder="nama@email.com"></div>
@@ -141,14 +135,13 @@ tr:last-child td{border-bottom:0}
  </div>
 </div>
 
-<!-- APPLICATION -->
-<div id="appScreen" class="app hidden">
+<div id="appScreen" class="hidden">
  <aside class="sidebar">
   <div class="brand">MyFinance<span> Family</span></div>
   <div class="nav-label">MENU UTAMA</div>
   <nav>
    <button class="nav-btn active" data-page="dashboard" onclick="navigate('dashboard')">▦ Dashboard</button>
-   <button class="nav-btn" data-page="transactions" onclick="navigate('transactions')">⇄ Transaksi</button>
+   <button class="nav-btn" data-page="transactions" onclick="navigate('transactions')">💬 Chat Transaksi</button>
    <button class="nav-btn" data-page="accounts" onclick="navigate('accounts')">▣ Rekening</button>
    <button class="nav-btn" data-page="family" onclick="navigate('family')">♧ Keluarga</button>
   </nav>
@@ -166,7 +159,6 @@ tr:last-child td{border-bottom:0}
    <div class="user-pill" id="userPill">Pengguna</div>
   </div>
 
-  <!-- DASHBOARD -->
   <section id="page-dashboard">
    <div class="grid">
     <div class="card"><div class="stat-icon">💰</div><div class="stat-label">Total Saldo Keluarga</div><div class="stat-value" id="totalBalance">Rp0</div></div>
@@ -174,7 +166,6 @@ tr:last-child td{border-bottom:0}
     <div class="card"><div class="stat-icon">📉</div><div class="stat-label">Total Pengeluaran</div><div class="stat-value red" id="totalExpense">Rp0</div></div>
     <div class="card"><div class="stat-icon">👨‍👩‍👧</div><div class="stat-label">Anggota Keluarga</div><div class="stat-value" id="memberCount">1 orang</div></div>
    </div>
-
    <div class="section">
     <div class="section-head"><div class="section-title">Transaksi Terbaru</div><button class="btn btn-light" onclick="navigate('transactions')">Lihat semua</button></div>
     <div class="panel table-wrap">
@@ -182,28 +173,49 @@ tr:last-child td{border-bottom:0}
      <tbody id="recentTransactions"><tr><td colspan="5" class="empty">Memuat transaksi...</td></tr></tbody></table>
     </div>
    </div>
-
    <div class="section">
     <div class="section-head"><div class="section-title">Rekening Keluarga</div><button class="btn btn-light" onclick="navigate('accounts')">Lihat rekening</button></div>
     <div class="grid" id="dashboardAccounts"></div>
    </div>
   </section>
 
-  <!-- TRANSACTIONS -->
   <section id="page-transactions" class="hidden">
-   <div class="section-head"><div class="section-title">Catat Transaksi</div></div>
-   <div class="panel">
-    <div class="form-grid">
-     <div class="field"><label>Jenis transaksi</label><select id="txType" onchange="updateTransactionCategories()"><option value="expense">Pengeluaran</option><option value="income">Pemasukan</option></select></div>
-     <div class="field"><label>Jumlah (Rp)</label><input id="txAmount" type="number" min="1" placeholder="Contoh: 25000"></div>
-     <div class="field"><label>Keterangan</label><input id="txDescription" placeholder="Contoh: Makan siang"></div>
-     <div class="field"><label>Kategori</label><select id="txCategory"><option value="">Pilih kategori</option></select></div>
-     <div class="field"><label>Rekening</label><select id="txAccount"><option value="">Pilih rekening</option></select></div>
-     <div class="field"><label>Tanggal</label><input id="txDate" type="date"></div>
-     <div class="field full"><button class="btn btn-primary" onclick="addTransaction()">+ Simpan Transaksi</button></div>
+   <div class="panel" style="padding:0;overflow:hidden">
+    <div style="padding:17px 20px;background:#0f172a;color:white">
+     <div style="font-weight:800;font-size:16px">💬 Chat Keuangan Keluarga</div>
+     <div style="font-size:12px;color:#cbd5e1;margin-top:5px">Ceritakan transaksi seperti sedang chat biasa</div>
+    </div>
+    <div id="chatMessages" class="chat-area">
+     <div class="chat-bubble chat-bot">
+      Halo! 👋 Saya siap membantu mencatat keuangan keluarga.<br><br>
+      Contoh:<br>
+      • Makan siang 25 ribu<br>
+      • Beli bensin 50 ribu<br>
+      • Gaji masuk 3,5 juta<br>
+      • Belanja bulanan 450000
+     </div>
+    </div>
+    <div id="chatPreview" class="hidden preview-box">
+     <div style="font-weight:800;margin-bottom:12px">Periksa transaksi sebelum disimpan</div>
+     <div id="chatPreviewContent"></div>
+     <div class="form-grid" style="margin-top:12px">
+      <div class="field"><label>Jenis</label><select id="chatType" onchange="updateChatPreview()"><option value="expense">Pengeluaran</option><option value="income">Pemasukan</option></select></div>
+      <div class="field"><label>Nominal (Rp)</label><input id="chatAmount" type="number" min="1" oninput="updateChatSummary()"></div>
+      <div class="field"><label>Keterangan</label><input id="chatDescription"></div>
+      <div class="field"><label>Kategori</label><select id="chatCategory"></select></div>
+      <div class="field"><label>Rekening</label><select id="chatAccount"></select></div>
+      <div class="field"><label>Tanggal</label><input id="chatDate" type="date"></div>
+     </div>
+     <div style="display:flex;gap:9px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="chatSaveBtn" onclick="saveChatTransaction()">✓ Simpan Transaksi</button>
+      <button class="btn btn-light" onclick="cancelChatPreview()">Batal</button>
+     </div>
+    </div>
+    <div class="chat-input-area">
+     <input id="chatInput" class="chat-input" placeholder="Contoh: Makan siang 25000" onkeydown="if(event.key==='Enter')sendChatMessage()">
+     <button class="btn btn-primary chat-send" onclick="sendChatMessage()">➤</button>
     </div>
    </div>
-
    <div class="section">
     <div class="section-head"><div class="section-title">Riwayat Transaksi Keluarga</div></div>
     <div class="panel table-wrap">
@@ -213,35 +225,26 @@ tr:last-child td{border-bottom:0}
    </div>
   </section>
 
-  <!-- ACCOUNTS -->
   <section id="page-accounts" class="hidden">
    <div class="section-head"><div class="section-title">Tambah Rekening</div></div>
    <div class="panel">
     <div class="form-grid">
      <div class="field"><label>Nama rekening</label><input id="accountName" placeholder="Contoh: BCA Suami"></div>
-     <div class="field"><label>Jenis rekening</label>
-      <select id="accountType">
-       <option value="cash">Tunai</option><option value="bank">Bank</option><option value="ewallet">E-Wallet</option><option value="savings">Tabungan</option><option value="other">Lainnya</option>
-      </select>
-     </div>
+     <div class="field"><label>Jenis rekening</label><select id="accountType"><option value="cash">Tunai</option><option value="bank">Bank</option><option value="ewallet">E-Wallet</option><option value="savings">Tabungan</option><option value="other">Lainnya</option></select></div>
      <div class="field"><label>Saldo awal (Rp)</label><input id="accountBalance" type="number" placeholder="0"></div>
      <div class="field"><label>Pemilik rekening</label><select id="accountOwner"><option value="self">Saya</option><option value="spouse">Pasangan</option><option value="family">Keluarga</option></select></div>
      <div class="field full"><button class="btn btn-primary" onclick="addAccount()">+ Tambah Rekening</button></div>
     </div>
    </div>
-   <div class="section">
-    <div class="section-title" style="margin-bottom:14px">Semua Rekening</div>
-    <div class="grid" id="accountList"></div>
-   </div>
+   <div class="section"><div class="section-title" style="margin-bottom:14px">Semua Rekening</div><div class="grid" id="accountList"></div></div>
   </section>
 
-  <!-- FAMILY -->
   <section id="page-family" class="hidden">
-   <div class="notice">Semua anggota yang bergabung dalam keluarga dapat melihat saldo, rekening, dan transaksi bersama. Transaksi tetap mencatat siapa anggota yang membuatnya.</div>
+   <div class="notice">Anggota keluarga yang bergabung dapat melihat keuangan bersama. Setiap transaksi tetap mencatat anggota yang membuatnya.</div>
    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
     <div class="panel">
      <div class="section-title">Undang Pasangan</div>
-     <p class="page-sub">Buat kode undangan untuk menghubungkan akun pasangan ke keluarga ini.</p>
+     <p class="page-sub">Buat kode undangan untuk menghubungkan akun pasangan.</p>
      <button class="btn btn-primary btn-block" style="margin-top:15px" onclick="createInvite()">Buat Kode Undangan</button>
      <div id="inviteResult" class="hidden">
       <div class="invite-code" id="inviteCode">------</div>
@@ -267,27 +270,30 @@ tr:last-child td{border-bottom:0}
 <div id="toast" class="toast hidden"></div>
 
 <script>
-const API = "https://myfinance-api.pradhamaryando28.workers.dev";
-const TOKEN_KEY = "myfinance_token";
+const API="https://myfinance-api.pradhamaryando28.workers.dev";
+const TOKEN_KEY="myfinance_token";
 
-let token = localStorage.getItem(TOKEN_KEY) || "";
-let currentUser = null;
-let familyData = null;
-let accounts = [];
-let transactions = [];
-let categories = [];
+let token=localStorage.getItem(TOKEN_KEY)||"";
+let currentUser=null;
+let familyData=null;
+let accounts=[];
+let transactions=[];
+let categories=[];
+let pendingChatTransaction=null;
+let currentInviteCode="";
 
-const $ = id => document.getElementById(id);
-const money = value => new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(value)||0);
-const escapeHTML = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+const $=id=>document.getElementById(id);
+const money=value=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(value)||0);
+const escapeHTML=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 
 function toast(message){
  const el=$("toast");el.textContent=message;el.classList.remove("hidden");
- clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.classList.add("hidden"),3000);
+ clearTimeout(window.toastTimer);
+ window.toastTimer=setTimeout(()=>el.classList.add("hidden"),3500);
 }
 function authError(message){$("authError").textContent=message||""}
-function showLogin(){ $("loginForm").classList.remove("hidden");$("registerForm").classList.add("hidden");authError("");}
-function showRegister(){ $("registerForm").classList.remove("hidden");$("loginForm").classList.add("hidden");authError("");}
+function showLogin(){$("loginForm").classList.remove("hidden");$("registerForm").classList.add("hidden");authError("")}
+function showRegister(){$("registerForm").classList.remove("hidden");$("loginForm").classList.add("hidden");authError("")}
 
 async function api(path,options={}){
  const headers={"Content-Type":"application/json",...(options.headers||{})};
@@ -295,12 +301,13 @@ async function api(path,options={}){
  const response=await fetch(API+path,{...options,headers});
  let data={};
  try{data=await response.json()}catch(e){}
- if(!response.ok || data.success===false){
-  if(response.status===401){logout(false)}
+ if(!response.ok||data.success===false){
+  if(response.status===401)logout(false);
   throw new Error(data.message||data.error||"Terjadi kesalahan pada server");
  }
  return data;
 }
+
 function getData(result,key){
  if(Array.isArray(result))return result;
  if(Array.isArray(result?.[key]))return result[key];
@@ -344,17 +351,19 @@ async function startApp(){
   const me=await api("/api/me");
   currentUser=me.user||me.data?.user||me.data||me;
   $("userPill").textContent=currentUser.name||currentUser.email||"Pengguna";
-  $("txDate").value=new Date().toISOString().slice(0,10);
+  $("chatDate").value=new Date().toISOString().slice(0,10);
   await refreshAll();
  }catch(e){
-  if(token){toast(e.message)}
+  toast(e.message);
   logout(false);
  }
 }
 
 function logout(showMessage=true){
- token="";currentUser=null;localStorage.removeItem(TOKEN_KEY);
- $("appScreen").classList.add("hidden");$("authScreen").classList.remove("hidden");
+ token="";currentUser=null;
+ localStorage.removeItem(TOKEN_KEY);
+ $("appScreen").classList.add("hidden");
+ $("authScreen").classList.remove("hidden");
  if(showMessage)toast("Kamu telah keluar.");
 }
 
@@ -364,7 +373,7 @@ function navigate(page){
  document.querySelectorAll(".nav-btn[data-page]").forEach(el=>el.classList.toggle("active",el.dataset.page===page));
  const titles={
   dashboard:["Dashboard Keluarga","Ringkasan keuangan rumah tangga"],
-  transactions:["Transaksi Keluarga","Catat dan pantau pemasukan serta pengeluaran"],
+  transactions:["Chat Transaksi","Catat pemasukan dan pengeluaran dengan chat"],
   accounts:["Rekening Keluarga","Kelola seluruh rekening dan dompet"],
   family:["Anggota Keluarga","Kelola akses keuangan bersama pasangan"]
  };
@@ -374,7 +383,13 @@ function navigate(page){
 }
 
 async function refreshAll(){
- await Promise.allSettled([loadSummary(),loadAccounts(),loadTransactions(),loadFamily()]);
+ await Promise.allSettled([
+  loadSummary(),
+  loadAccounts(),
+  loadTransactions(),
+  loadCategories(),
+  loadFamily()
+ ]);
 }
 
 async function loadSummary(){
@@ -397,22 +412,46 @@ async function loadAccounts(){
 }
 
 function renderAccounts(){
- const html=accounts.map(a=>`
+ $("accountList").innerHTML=accounts.map(a=>`
   <div class="card">
    <div class="account-card">
-    <div><div class="account-name">${escapeHTML(a.name)}</div>
-    <div class="account-type">${escapeHTML(a.account_type||a.type||"Rekening")}</div></div>
+    <div><div class="account-name">${escapeHTML(a.name)}</div><div class="account-type">${escapeHTML(a.account_type||a.type||"Rekening")}</div></div>
     <div class="account-balance">${money(a.balance??a.current_balance??a.initial_balance)}</div>
    </div>
-  </div>`).join("");
- $("accountList").innerHTML=html||'<div class="panel empty">Belum ada rekening.</div>';
+  </div>`).join("")||'<div class="panel empty">Belum ada rekening.</div>';
+
  $("dashboardAccounts").innerHTML=accounts.slice(0,4).map(a=>`
-  <div class="card"><div class="stat-label">${escapeHTML(a.name)}</div>
-  <div class="stat-value">${money(a.balance??a.current_balance??a.initial_balance)}</div></div>`).join("")||'<div class="card empty">Belum ada rekening.</div>';
+  <div class="card"><div class="stat-label">${escapeHTML(a.name)}</div><div class="stat-value">${money(a.balance??a.current_balance??a.initial_balance)}</div></div>
+ `).join("")||'<div class="card empty">Belum ada rekening.</div>';
 }
 
 function updateAccountOptions(){
- $("txAccount").innerHTML='<option value="">Pilih rekening</option>'+accounts.map(a=>`<option value="${a.id}">${escapeHTML(a.name)}</option>`).join("");
+ const options='<option value="">Pilih rekening</option>'+accounts.map(a=>`<option value="${a.id}">${escapeHTML(a.name)}</option>`).join("");
+ $("chatAccount").innerHTML=options;
+}
+
+async function addAccount(){
+ const name=$("accountName").value.trim();
+ const account_type=$("accountType").value;
+ const initial_balance=Number($("accountBalance").value)||0;
+ if(!name)return toast("Nama rekening wajib diisi.");
+ try{
+  await api("/api/accounts",{method:"POST",body:JSON.stringify({name,account_type,initial_balance})});
+  $("accountName").value="";
+  $("accountBalance").value="";
+  toast("Rekening berhasil ditambahkan.");
+  await Promise.all([loadAccounts(),loadSummary()]);
+ }catch(e){toast(e.message)}
+}
+
+async function loadCategories(){
+ try{
+  const result=await api("/api/categories");
+  categories=getData(result,"categories");
+ }catch(e){
+  categories=[];
+  console.error("Categories:",e);
+ }
 }
 
 async function loadTransactions(){
@@ -426,22 +465,19 @@ async function loadTransactions(){
 function renderTransactions(){
  const rows=transactions.map(t=>{
   const isIncome=t.type==="income";
-  const amount=Number(t.amount)||0;
-  const date=t.transaction_date||t.date||"";
-  const person=t.created_by_name||t.user_name||t.name||"Anggota keluarga";
-  const category=t.category_name||t.category||"-";
-  const account=t.account_name||"-";
   return `<tr>
-   <td>${escapeHTML(date)}</td>
+   <td>${escapeHTML(t.transaction_date||t.date||"-")}</td>
    <td>${escapeHTML(t.description||"-")}</td>
-   <td>${escapeHTML(category)}</td>
-   <td>${escapeHTML(person)}</td>
-   <td><span class="tag ${isIncome?"tag-income":"tag-expense"}">${isIncome?"Pemasukan":"Pengeluaran"}</span></td>
-   <td class="${isIncome?"green":"red"}" style="font-weight:800">${isIncome?"+":"-"} ${money(amount)}</td>
+   <td>${escapeHTML(t.category_name||t.category||"-")}</td>
+   <td>${escapeHTML(t.account_name||"-")}</td>
+   <td>${escapeHTML(t.created_by_name||t.user_name||"Anggota keluarga")}</td>
+   <td class="${isIncome?"green":"red"}" style="font-weight:800">${isIncome?"+":"-"} ${money(t.amount)}</td>
   </tr>`;
  }).join("");
+
  $("allTransactions").innerHTML=rows||'<tr><td colspan="6" class="empty">Belum ada transaksi.</td></tr>';
- const recent=transactions.slice(0,5).map(t=>{
+
+ $("recentTransactions").innerHTML=transactions.slice(0,5).map(t=>{
   const isIncome=t.type==="income";
   return `<tr>
    <td>${escapeHTML(t.transaction_date||t.date||"-")}</td>
@@ -450,105 +486,290 @@ function renderTransactions(){
    <td>${escapeHTML(t.created_by_name||t.user_name||"Anggota")}</td>
    <td class="${isIncome?"green":"red"}" style="font-weight:800">${isIncome?"+":"-"} ${money(t.amount)}</td>
   </tr>`;
- }).join("");
- $("recentTransactions").innerHTML=recent||'<tr><td colspan="5" class="empty">Belum ada transaksi.</td></tr>';
+ }).join("")||'<tr><td colspan="5" class="empty">Belum ada transaksi.</td></tr>';
 }
 
-async function addTransaction(){
- const type=$("txType").value;
- const amount=Number($("txAmount").value);
- const description=$("txDescription").value.trim();
- const category_id=$("txCategory").value;
- const account_id=$("txAccount").value;
- const transaction_date=$("txDate").value;
- if(!amount||amount<=0||!description||!account_id||!transaction_date){
-  return toast("Lengkapi jumlah, keterangan, rekening, dan tanggal.");
+/* CHAT TRANSAKSI */
+
+function addChatBubble(message,sender="user"){
+ const area=$("chatMessages");
+ const bubble=document.createElement("div");
+ bubble.className="chat-bubble "+(sender==="bot"?"chat-bot":"chat-user");
+ bubble.textContent=message;
+ area.appendChild(bubble);
+
+ const meta=document.createElement("div");
+ meta.className="chat-meta";
+ meta.textContent=new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
+ bubble.appendChild(meta);
+
+ area.scrollTop=area.scrollHeight;
+}
+
+function parseChatAmount(message){
+ const match=message.toLowerCase().match(/(\d+(?:[.,]\d+)?)\s*(juta|jt|ribu|rb|k)?/i);
+ if(!match)return 0;
+
+ let amount=Number(match[1].replace(",","."));
+ const unit=(match[2]||"").toLowerCase();
+
+ if(unit==="juta"||unit==="jt")amount*=1000000;
+ else if(unit==="ribu"||unit==="rb"||unit==="k")amount*=1000;
+
+ return Math.round(amount);
+}
+
+function detectChatType(message){
+ const text=message.toLowerCase();
+ const incomeWords=[
+  "gaji","bonus","pendapatan","pemasukan","terima uang",
+  "dapat uang","hasil usaha","transfer masuk","uang masuk",
+  "komisi","penjualan","refund"
+ ];
+ return incomeWords.some(word=>text.includes(word))?"income":"expense";
+}
+
+function detectChatCategory(message,type){
+ const text=message.toLowerCase();
+
+ const rules=type==="income"?[
+  ["gaji",["gaji","upah"]],
+  ["bonus",["bonus","thr"]],
+  ["usaha",["usaha","jualan","penjualan"]],
+  ["lain",["pendapatan","pemasukan","komisi","refund"]]
+ ]:[
+  ["makanan",["makan","sarapan","kopi","minum","restoran"]],
+  ["transportasi",["bensin","bbm","parkir","tol","ojek","grab","gojek"]],
+  ["belanja",["belanja","supermarket","sembako","sayur"]],
+  ["tagihan",["listrik","air","internet","wifi","pulsa"]],
+  ["kesehatan",["obat","dokter","rumah sakit","klinik"]],
+  ["pendidikan",["sekolah","buku","kuliah"]]
+ ];
+
+ for(const [name,words] of rules){
+  if(words.some(word=>text.includes(word))){
+   const found=categories.find(c=>
+    c.type===type&&c.name.toLowerCase().includes(name)
+   );
+   if(found)return String(found.id);
+  }
  }
- try{
-  await api("/api/transactions",{method:"POST",body:JSON.stringify({
-   type,amount,description,category_id:category_id?Number(category_id):null,
-   account_id:Number(account_id),transaction_date
-  })});
-  $("txAmount").value="";$("txDescription").value="";
-  toast("Transaksi berhasil disimpan.");
-  await Promise.all([loadSummary(),loadAccounts(),loadTransactions()]);
- }catch(e){toast(e.message)}
+ return "";
 }
 
-async function addAccount(){
- const name=$("accountName").value.trim();
- const account_type=$("accountType").value;
- const initial_balance=Number($("accountBalance").value)||0;
- if(!name)return toast("Nama rekening wajib diisi.");
- try{
-  await api("/api/accounts",{method:"POST",body:JSON.stringify({name,account_type,initial_balance})});
-  $("accountName").value="";$("accountBalance").value="";
-  toast("Rekening berhasil ditambahkan.");
-  await Promise.all([loadAccounts(),loadSummary()]);
- }catch(e){toast(e.message)}
+function detectChatAccount(message){
+ const text=message.toLowerCase();
+ const found=accounts.find(a=>text.includes(String(a.name).toLowerCase()));
+ return found?String(found.id):(accounts.length===1?String(accounts[0].id):"");
 }
 
-async function loadCategories(){
- try{
-  const result=await api("/api/categories");
-  categories=getData(result,"categories");
-  updateTransactionCategories();
- }catch(e){
-  categories=[];
-  updateTransactionCategories();
- }
+function detectChatDescription(message){
+ return message
+  .replace(/\b\d+(?:[.,]\d+)?\s*(juta|jt|ribu|rb|k)?\b/gi,"")
+  .replace(/\b(rp|rupiah)\b/gi,"")
+  .replace(/\b(masuk|diterima|pemasukan|pengeluaran)\b/gi,"")
+  .replace(/\s+/g," ")
+  .trim();
 }
-function updateTransactionCategories(){
- const type=$("txType").value;
+
+function fillChatCategories(type,selected){
  const filtered=categories.filter(c=>c.type===type);
- $("txCategory").innerHTML='<option value="">Pilih kategori</option>'+filtered.map(c=>`<option value="${c.id}">${escapeHTML(c.name)}</option>`).join("");
+ $("chatCategory").innerHTML='<option value="">Pilih kategori</option>'+
+  filtered.map(c=>`<option value="${c.id}">${escapeHTML(c.name)}</option>`).join("");
+ $("chatCategory").value=selected||"";
 }
+
+function updateChatSummary(){
+ const type=$("chatType").value;
+ const amount=Number($("chatAmount").value)||0;
+ $("chatPreviewContent").innerHTML=`
+  <div class="preview-summary">
+   <div style="font-size:11px;color:#64748b">Nominal transaksi</div>
+   <div style="font-size:22px;font-weight:800;color:${type==="income"?"#16a34a":"#dc2626"}">
+    ${type==="income"?"+":"-"} ${money(amount)}
+   </div>
+  </div>`;
+}
+
+function updateChatPreview(){
+ const oldCategory=$("chatCategory").value;
+ fillChatCategories($("chatType").value,oldCategory);
+ updateChatSummary();
+}
+
+function sendChatMessage(){
+ const message=$("chatInput").value.trim();
+ if(!message)return;
+
+ if(pendingChatTransaction){
+  return toast("Selesaikan atau batalkan konfirmasi transaksi sebelumnya.");
+ }
+
+ addChatBubble(message,"user");
+ $("chatInput").value="";
+
+ const text=message.toLowerCase();
+
+ if(/\b(transfer|pindah saldo|kirim saldo)\b/i.test(text)){
+  addChatBubble("Pesan ini tampaknya merupakan transfer antar-rekening. Fitur transfer khusus belum diaktifkan. Saya tidak menyimpannya sebagai pemasukan atau pengeluaran.");
+  return;
+ }
+
+ const amount=parseChatAmount(message);
+ if(!amount||amount<=0){
+  addChatBubble("Saya belum menemukan nominal transaksi. Contoh: Makan siang 25000 atau Gaji 3,5 juta.");
+  return;
+ }
+
+ const type=detectChatType(message);
+ const categoryId=detectChatCategory(message,type);
+ const accountId=detectChatAccount(message);
+ const description=detectChatDescription(message)||message;
+
+ pendingChatTransaction={message};
+
+ $("chatType").value=type;
+ $("chatAmount").value=amount;
+ $("chatDescription").value=description;
+ $("chatDate").value=new Date().toISOString().slice(0,10);
+
+ fillChatCategories(type,categoryId);
+ updateAccountOptions();
+ $("chatAccount").value=accountId;
+
+ updateChatSummary();
+ $("chatPreview").classList.remove("hidden");
+ $("chatPreview").scrollIntoView({behavior:"smooth",block:"nearest"});
+
+ addChatBubble(
+  "Saya membaca pesanmu sebagai "+(type==="income"?"PEMASUKAN":"PENGELUARAN")+
+  " sebesar "+money(amount)+". Periksa kategori dan rekening, lalu tekan Simpan Transaksi."
+ );
+}
+
+function cancelChatPreview(){
+ pendingChatTransaction=null;
+ $("chatPreview").classList.add("hidden");
+ addChatBubble("Konfirmasi dibatalkan. Belum ada transaksi yang disimpan.");
+}
+
+async function saveChatTransaction(){
+ if(!pendingChatTransaction)return;
+
+ const type=$("chatType").value;
+ const amount=Number($("chatAmount").value);
+ const description=$("chatDescription").value.trim();
+ const category_id=$("chatCategory").value;
+ const account_id=$("chatAccount").value;
+ const transaction_date=$("chatDate").value;
+
+ if(!amount||amount<=0)return toast("Nominal transaksi tidak valid.");
+ if(!description)return toast("Keterangan wajib diisi.");
+ if(!account_id)return toast("Pilih rekening terlebih dahulu.");
+ if(!transaction_date)return toast("Tanggal transaksi wajib diisi.");
+
+ const button=$("chatSaveBtn");
+ button.disabled=true;
+ button.textContent="Menyimpan...";
+
+ try{
+  await api("/api/transactions",{
+   method:"POST",
+   body:JSON.stringify({
+    type,
+    amount,
+    description,
+    category_id:category_id?Number(category_id):null,
+    account_id:Number(account_id),
+    transaction_date
+   })
+  });
+
+  addChatBubble(
+   "✓ Transaksi berhasil disimpan!\n"+
+   (type==="income"?"+":"-")+money(amount)+"\n"+
+   description
+  ,"bot");
+
+  pendingChatTransaction=null;
+  $("chatPreview").classList.add("hidden");
+  toast("Transaksi berhasil disimpan.");
+
+  await Promise.all([loadSummary(),loadAccounts(),loadTransactions()]);
+ }catch(e){
+  toast(e.message);
+ }finally{
+  button.disabled=false;
+  button.textContent="✓ Simpan Transaksi";
+ }
+}
+
+/* FITUR KELUARGA */
 
 async function loadFamily(){
  try{
   const result=await api("/api/family");
   familyData=result.family||result.data?.family||result.data||result;
-  const members=getData(result,"members").length?getData(result,"members"):getData(familyData,"members");
+
+  const members=getData(result,"members").length?
+   getData(result,"members"):getData(familyData,"members");
+
   $("memberCount").textContent=(members.length||1)+" orang";
+
   $("familyMembers").innerHTML=members.map(m=>`
    <div class="member">
     <div class="member-info">
      <div class="member-avatar">${escapeHTML((m.name||m.email||"?").charAt(0).toUpperCase())}</div>
-     <div><div class="member-name">${escapeHTML(m.name||"Anggota keluarga")}</div>
-     <div class="member-email">${escapeHTML(m.email||"")}</div></div>
+     <div>
+      <div class="member-name">${escapeHTML(m.name||"Anggota keluarga")}</div>
+      <div class="member-email">${escapeHTML(m.email||"")}</div>
+     </div>
     </div>
     <span class="tag ${m.role==="admin"?"tag-income":"tag-expense"}">${escapeHTML(m.role||"member")}</span>
-   </div>`).join("")||'<div class="empty">Belum ada anggota yang bergabung.</div>';
+   </div>
+  `).join("")||'<div class="empty">Belum ada anggota keluarga.</div>';
  }catch(e){
-  $("familyMembers").innerHTML='<div class="empty">Data keluarga belum tersedia. Pastikan Worker API sudah diperbarui.</div>';
+  $("familyMembers").innerHTML='<div class="empty">Data keluarga belum tersedia. Periksa Worker API.</div>';
   console.error("Family:",e);
  }
 }
 
 async function createInvite(){
  try{
-  const result=await api("/api/family/invite",{method:"POST",body:JSON.stringify({})});
+  const result=await api("/api/family/invite",{
+   method:"POST",
+   body:JSON.stringify({})
+  });
+
   const code=result.code||result.invite_code||result.data?.code||result.data?.invite_code;
-  if(!code)throw new Error("Kode undangan tidak ditemukan dari server.");
+  if(!code)throw new Error("Kode undangan tidak ditemukan.");
+
+  currentInviteCode=code;
   $("inviteCode").textContent=code;
-  $("inviteExpiry").textContent=result.expires_at?"Berlaku sampai: "+result.expires_at:"Gunakan kode ini untuk mengundang pasangan.";
+  $("inviteExpiry").textContent=result.expires_at?
+   "Berlaku sampai: "+result.expires_at:"Gunakan kode ini untuk mengundang pasangan.";
   $("inviteResult").classList.remove("hidden");
-  window.currentInviteCode=code;
  }catch(e){toast(e.message)}
 }
 
 async function copyInvite(){
- if(!window.currentInviteCode)return;
- try{await navigator.clipboard.writeText(window.currentInviteCode);toast("Kode undangan berhasil disalin.");}
- catch(e){toast("Tidak dapat menyalin kode. Silakan salin manual.")}
+ if(!currentInviteCode)return;
+ try{
+  await navigator.clipboard.writeText(currentInviteCode);
+  toast("Kode undangan berhasil disalin.");
+ }catch(e){toast("Silakan salin kode secara manual.")}
 }
 
 async function joinFamily(){
  const code=$("joinCode").value.trim();
- if(!code)return toast("Masukkan kode undangan terlebih dahulu.");
- if(!confirm("Gabung ke keluarga ini? Data keuangan lama akan mengikuti kebijakan penggabungan yang diterapkan server."))return;
+ if(!code)return toast("Masukkan kode undangan.");
+ if(!confirm("Gabung ke keluarga ini? Pastikan kamu memahami bagaimana data lama akan digabung oleh server."))return;
+
  try{
-  await api("/api/family/join",{method:"POST",body:JSON.stringify({code})});
+  await api("/api/family/join",{
+   method:"POST",
+   body:JSON.stringify({code})
+  });
   $("joinCode").value="";
   toast("Berhasil bergabung dengan keluarga.");
   await refreshAll();
@@ -556,14 +777,11 @@ async function joinFamily(){
  }catch(e){toast(e.message)}
 }
 
-async function boot(){
- if(!token)return;
- await startApp();
-}
+/* MULAI APLIKASI */
 
 (async()=>{
  if(token){
-  await boot();
+  await startApp();
  }else{
   $("authScreen").classList.remove("hidden");
  }
