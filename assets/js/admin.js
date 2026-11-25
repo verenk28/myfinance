@@ -34,6 +34,19 @@ async function call(path, opt = {}) {
     return d;
 }
 
+// SIAPKAN PILIHAN DOMPET
+function setupWalletOptions() {
+    const select = $("adjustProfile");
+
+    if (!select) return;
+
+    select.innerHTML = `
+        <option value="Keluarga">Saldo Keluarga</option>
+        <option value="Suami">Saldo Suami</option>
+        <option value="Istri">Saldo Istri</option>
+    `;
+}
+
 // LOGIN ADMIN
 $("loginForm").onsubmit = async e => {
     e.preventDefault();
@@ -61,13 +74,112 @@ function showAdmin() {
     $("login").hidden = true;
     $("dashboard").hidden = false;
 
-    loadOverview();
+    setupWalletOptions();
 
     const now = new Date();
     const first = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    $("dateFrom").value = first.toLocaleDateString("en-CA");
-    $("dateTo").value = now.toLocaleDateString("en-CA");
+    if ($("dateFrom")) {
+        $("dateFrom").value = first.toLocaleDateString("en-CA");
+    }
+
+    if ($("dateTo")) {
+        $("dateTo").value = now.toLocaleDateString("en-CA");
+    }
+
+    if ($("adjustDate")) {
+        $("adjustDate").value = now.toLocaleDateString("en-CA");
+    }
+
+    loadOverview();
+}
+
+// TAMPILKAN KARTU SALDO
+function renderWallets(wallets) {
+    const overview = $("overview");
+
+    if (!overview) return;
+
+    let panel = $("walletCards");
+
+    if (!panel) {
+        panel = document.createElement("div");
+        panel.id = "walletCards";
+
+        const heading = overview.querySelector("h2");
+
+        if (heading) {
+            heading.insertAdjacentElement("afterend", panel);
+        } else {
+            overview.prepend(panel);
+        }
+    }
+
+    panel.innerHTML = `
+        <div style="
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+            gap:12px;
+            margin:18px 0;
+        ">
+            <div style="
+                background:#eff6ff;
+                border:1px solid #bfdbfe;
+                border-radius:14px;
+                padding:18px;
+            ">
+                <small style="color:#1d4ed8;font-weight:600">
+                    SALDO KELUARGA
+                </small>
+                <h2 style="color:#1e40af;margin:10px 0 0">
+                    ${fmt(wallets.keluarga)}
+                </h2>
+            </div>
+
+            <div style="
+                background:#ecfdf5;
+                border:1px solid #a7f3d0;
+                border-radius:14px;
+                padding:18px;
+            ">
+                <small style="color:#047857;font-weight:600">
+                    SALDO SUAMI
+                </small>
+                <h2 style="color:#047857;margin:10px 0 0">
+                    ${fmt(wallets.suami)}
+                </h2>
+            </div>
+
+            <div style="
+                background:#fff7ed;
+                border:1px solid #fed7aa;
+                border-radius:14px;
+                padding:18px;
+            ">
+                <small style="color:#c2410c;font-weight:600">
+                    SALDO ISTRI
+                </small>
+                <h2 style="color:#c2410c;margin:10px 0 0">
+                    ${fmt(wallets.istri)}
+                </h2>
+            </div>
+        </div>
+
+        <div style="
+            padding:16px;
+            border-radius:12px;
+            background:#f8fafc;
+            border:1px solid #e2e8f0;
+            margin-bottom:18px;
+        ">
+            <small style="color:#64748b;font-weight:600">
+                TOTAL SELURUH SALDO
+            </small>
+            <h2 style="margin:6px 0 0;color:#0f172a">
+                ${fmt(wallets.total)}
+            </h2>
+        </div>
+    `;
 }
 
 // RINGKASAN
@@ -78,7 +190,16 @@ async function loadOverview() {
             call("/api/admin/adjustments")
         ]);
 
-        $("totalBalance").textContent = fmt(s.data.balance);
+        const wallets = s.data.wallets || {
+            keluarga: 0,
+            suami: 0,
+            istri: 0,
+            total: Number(s.data.balance || 0)
+        };
+
+        renderWallets(wallets);
+
+        $("totalBalance").textContent = fmt(wallets.total);
         $("totalIncome").textContent = fmt(s.data.income);
         $("totalExpense").textContent = fmt(s.data.expense);
 
@@ -90,7 +211,7 @@ async function loadOverview() {
                         ${esc(x.description)}
                         <small>
                             ${esc(x.adjustment_date)}
-                            · ${esc(x.profile || "Suami")}
+                            · ${esc(x.profile || "Keluarga")}
                             · ${x.type === "add" ? "Tambah saldo" : "Tarik saldo"}
                         </small>
                     </span>
@@ -119,11 +240,17 @@ document.querySelectorAll("nav [data-tab]").forEach(b => {
         if (b.dataset.tab === "overview") {
             loadOverview();
         }
+
+        if (b.dataset.tab === "report") {
+            loadReport();
+        }
     };
 });
 
 // TANGGAL DEFAULT
-$("adjustDate").value = new Date().toLocaleDateString("en-CA");
+if ($("adjustDate")) {
+    $("adjustDate").value = new Date().toLocaleDateString("en-CA");
+}
 
 // TAMBAH / TARIK SALDO
 $("adjustForm").onsubmit = async e => {
@@ -135,18 +262,19 @@ $("adjustForm").onsubmit = async e => {
     const type = $("adjustType").value;
     const amount = Number($("adjustAmount").value);
 
-    if (!["Suami", "Istri"].includes(profile)) {
-        $("adjustMsg").textContent = "Profil tidak valid.";
+    if (!["Keluarga", "Suami", "Istri"].includes(profile)) {
+        $("adjustMsg").textContent = "Dompet tidak valid.";
         return;
     }
 
-    if (!["add", "withdraw"].includes(type) || amount <= 0) {
+    if (!["add", "withdraw"].includes(type) ||
+        !Number.isSafeInteger(amount) || amount <= 0) {
         $("adjustMsg").textContent = "Jenis atau nominal tidak valid.";
         return;
     }
 
     try {
-        await call("/api/admin/adjustments", {
+        const d = await call("/api/admin/adjustments", {
             method: "POST",
             body: JSON.stringify({
                 type,
@@ -157,16 +285,21 @@ $("adjustForm").onsubmit = async e => {
             })
         });
 
-        $("adjustMsg").textContent =
+        $("adjustMsg").textContent = d.message ||
             `Penyesuaian saldo ${profile} berhasil disimpan.`;
+
+        const selectedProfile = profile;
 
         $("adjustForm").reset();
 
-        $("adjustProfile").value = profile;
+        $("adjustProfile").value = selectedProfile;
         $("adjustType").value = "add";
         $("adjustDate").value = new Date().toLocaleDateString("en-CA");
 
-        loadOverview();
+        $("adjustAmount").value = "";
+        $("adjustDesc").value = "";
+
+        await loadOverview();
 
     } catch (err) {
         $("adjustMsg").textContent = err.message;
@@ -178,8 +311,15 @@ $("runReport").onclick = loadReport;
 
 async function loadReport() {
     try {
+        const from = $("dateFrom").value;
+        const to = $("dateTo").value;
+
+        if (!from || !to || from > to) {
+            throw Error("Periksa tanggal laporan.");
+        }
+
         const d = await call(
-            `/api/admin/transactions?from=${$("dateFrom").value}&to=${$("dateTo").value}`
+            `/api/admin/transactions?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`
         );
 
         lastRows = d.data || [];
@@ -192,41 +332,71 @@ async function loadReport() {
             .filter(x => x.type === "expense")
             .reduce((s, x) => s + Number(x.amount), 0);
 
+        const expenseSuami = lastRows
+            .filter(x => x.type === "expense" && x.profile === "Suami")
+            .reduce((s, x) => s + Number(x.amount), 0);
+
+        const expenseIstri = lastRows
+            .filter(x => x.type === "expense" && x.profile === "Istri")
+            .reduce((s, x) => s + Number(x.amount), 0);
+
         $("reportTotals").innerHTML = `
-            <p>
-                <b>Pemasukan:</b> ${fmt(income)}
-                &nbsp;
-                <b>Pengeluaran:</b> ${fmt(expense)}
-                &nbsp;
-                <b>Selisih:</b> ${fmt(income - expense)}
-            </p>
+            <div style="
+                display:grid;
+                grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+                gap:10px;
+                margin:15px 0;
+            ">
+                <div class="card">
+                    <small>Pemasukan</small>
+                    <h3>${fmt(income)}</h3>
+                </div>
+                <div class="card">
+                    <small>Pengeluaran</small>
+                    <h3>${fmt(expense)}</h3>
+                </div>
+                <div class="card">
+                    <small>Pengeluaran Suami</small>
+                    <h3>${fmt(expenseSuami)}</h3>
+                </div>
+                <div class="card">
+                    <small>Pengeluaran Istri</small>
+                    <h3>${fmt(expenseIstri)}</h3>
+                </div>
+                <div class="card">
+                    <small>Selisih</small>
+                    <h3>${fmt(income - expense)}</h3>
+                </div>
+            </div>
         `;
 
         $("reportRows").innerHTML = `
-            <table class="reporttable">
-                <thead>
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Profil</th>
-                        <th>Keterangan</th>
-                        <th>Jenis</th>
-                        <th>Nominal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${lastRows.map(x => `
+            <div style="overflow-x:auto">
+                <table class="reporttable">
+                    <thead>
                         <tr>
-                            <td>${esc(x.transaction_date)}</td>
-                            <td>${esc(x.profile || "-")}</td>
-                            <td>${esc(x.description)}</td>
-                            <td>
-                                ${x.type === "income" ? "Pemasukan" : "Pengeluaran"}
-                            </td>
-                            <td>${fmt(x.amount)}</td>
+                            <th>Tanggal</th>
+                            <th>Profil</th>
+                            <th>Keterangan</th>
+                            <th>Jenis</th>
+                            <th>Nominal</th>
                         </tr>
-                    `).join("")}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        ${lastRows.map(x => `
+                            <tr>
+                                <td>${esc(x.transaction_date)}</td>
+                                <td>${esc(x.profile || "-")}</td>
+                                <td>${esc(x.description)}</td>
+                                <td>
+                                    ${x.type === "income" ? "Pemasukan" : "Pengeluaran"}
+                                </td>
+                                <td>${fmt(x.amount)}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </div>
         `;
 
     } catch (e) {
@@ -258,18 +428,18 @@ $("csv").onclick = () => {
             .join(",")
     ).join("\r\n");
 
+    const blob = new Blob(["\ufeff" + csv], {
+        type: "text/csv;charset=utf-8"
+    });
+
+    const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
 
-    a.href = URL.createObjectURL(
-        new Blob(["\ufeff" + csv], {
-            type: "text/csv;charset=utf-8"
-        })
-    );
-
+    a.href = url;
     a.download = "laporan-myfinance.csv";
     a.click();
 
-    URL.revokeObjectURL(a.href);
+    URL.revokeObjectURL(url);
 };
 
 // LOGOUT
@@ -302,6 +472,8 @@ function esc(s) {
 }
 
 // CEK SESI
+setupWalletOptions();
+
 if (token) {
     showAdmin();
 }
