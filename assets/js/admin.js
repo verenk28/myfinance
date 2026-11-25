@@ -1,18 +1,307 @@
-const API="https://myfinance-api.pradhamaryando28.workers.dev";
-let token=sessionStorage.getItem("mf_admin_token")||"",lastRows=[];
-const $=id=>document.getElementById(id);
-const fmt=n=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(n||0));
-async function call(path,opt={}){const r=await fetch(API+path,{...opt,headers:{"Content-Type":"application/json",...(token?{Authorization:"Bearer "+token}:{}),...(opt.headers||{})}});const d=await r.json().catch(()=>({success:false,message:"Respons server tidak valid"}));if(!r.ok||d.success===false)throw Error(d.message||"Permintaan gagal");return d;}
-$("loginForm").onsubmit=async e=>{e.preventDefault();$("loginError").textContent="";try{const d=await call("/api/admin/login",{method:"POST",body:JSON.stringify({pin:$("pin").value})});token=d.token;sessionStorage.setItem("mf_admin_token",token);showAdmin();}catch(err){$("loginError").textContent=err.message;}};
-function showAdmin(){$("login").hidden=true;$("dashboard").hidden=false;loadOverview();const now=new Date(),first=new Date(now.getFullYear(),now.getMonth(),1);$("dateFrom").value=first.toLocaleDateString("en-CA");$("dateTo").value=now.toLocaleDateString("en-CA");}
-async function loadOverview(){try{const [s,a]=await Promise.all([call("/api/summary"),call("/api/admin/adjustments")]);$("totalBalance").textContent=fmt(s.data.balance);$("totalIncome").textContent=fmt(s.data.income);$("totalExpense").textContent=fmt(s.data.expense);$("adjustments").innerHTML=(a.data||[]).slice(0,8).map(x=>`<div class="row"><span>${esc(x.description)}<small>${esc(x.adjustment_date)} · ${x.type==="add"?"Tambah saldo":"Tarik saldo"}</small></span><b>${x.type==="add"?"+":"−"}${fmt(x.amount)}</b></div>`).join("")||"<p>Belum ada penyesuaian saldo.</p>";}catch(e){$("globalError").textContent=e.message;if(e.message.includes("Sesi admin"))logout();}}
-document.querySelectorAll("nav [data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("nav [data-tab]").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".tab").forEach(x=>x.hidden=x.id!==b.dataset.tab);if(b.dataset.tab==="overview")loadOverview();});
-$("adjustDate").value=new Date().toLocaleDateString("en-CA");
-$("adjustForm").onsubmit=async e=>{e.preventDefault();$("adjustMsg").textContent="";try{await call("/api/admin/adjustments",{method:"POST",body:JSON.stringify({type:$("adjustType").value,amount:Number($("adjustAmount").value),description:$("adjustDesc").value,adjustment_date:$("adjustDate").value})});$("adjustMsg").textContent="Penyesuaian saldo berhasil disimpan."; $("adjustForm").reset();$("adjustDate").value=new Date().toLocaleDateString("en-CA");loadOverview();}catch(err){$("adjustMsg").textContent=err.message;}};
-$("runReport").onclick=loadReport;
-async function loadReport(){try{const d=await call(`/api/admin/transactions?from=${$("dateFrom").value}&to=${$("dateTo").value}`);lastRows=d.data||[];const income=lastRows.filter(x=>x.type==="income").reduce((s,x)=>s+Number(x.amount),0),expense=lastRows.filter(x=>x.type==="expense").reduce((s,x)=>s+Number(x.amount),0);$("reportTotals").innerHTML=`<p><b>Pemasukan:</b> ${fmt(income)} &nbsp; <b>Pengeluaran:</b> ${fmt(expense)} &nbsp; <b>Selisih:</b> ${fmt(income-expense)}</p>`;$("reportRows").innerHTML=`<table class="reporttable"><thead><tr><th>Tanggal</th><th>Profil</th><th>Keterangan</th><th>Jenis</th><th>Nominal</th></tr></thead><tbody>${lastRows.map(x=>`<tr><td>${esc(x.transaction_date)}</td><td>${esc(x.profile)}</td><td>${esc(x.description)}</td><td>${x.type==="income"?"Pemasukan":"Pengeluaran"}</td><td>${fmt(x.amount)}</td></tr>`).join("")}</tbody></table>`;}catch(e){$("reportRows").textContent=e.message;}}
-$("csv").onclick=()=>{if(!lastRows.length){alert("Belum ada data laporan.");return;}const rows=[["Tanggal","Profil","Keterangan","Jenis","Kategori","Nominal"],...lastRows.map(x=>[x.transaction_date,x.profile,x.description,x.type,x.category_name,x.amount])];const csv=rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));a.download="laporan-myfinance.csv";a.click();URL.revokeObjectURL(a.href);};
-$("logout").onclick=logout;
-async function logout(){try{await call("/api/admin/logout",{method:"POST"});}catch{}token="";sessionStorage.removeItem("mf_admin_token");$("dashboard").hidden=true;$("login").hidden=false;}
-function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-if(token)showAdmin();
+
+const API = "https://myfinance-api.pradhamaryando28.workers.dev";
+
+let token = sessionStorage.getItem("mf_admin_token") || "";
+let lastRows = [];
+
+const $ = id => document.getElementById(id);
+
+const fmt = n => new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0
+}).format(Number(n || 0));
+
+async function call(path, opt = {}) {
+    const r = await fetch(API + path, {
+        ...opt,
+        headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: "Bearer " + token } : {}),
+            ...(opt.headers || {})
+        }
+    });
+
+    const d = await r.json().catch(() => ({
+        success: false,
+        message: "Respons server tidak valid"
+    }));
+
+    if (!r.ok || d.success === false) {
+        throw Error(d.message || "Permintaan gagal");
+    }
+
+    return d;
+}
+
+// LOGIN ADMIN
+$("loginForm").onsubmit = async e => {
+    e.preventDefault();
+    $("loginError").textContent = "";
+
+    try {
+        const d = await call("/api/admin/login", {
+            method: "POST",
+            body: JSON.stringify({
+                pin: $("pin").value
+            })
+        });
+
+        token = d.token;
+        sessionStorage.setItem("mf_admin_token", token);
+
+        showAdmin();
+    } catch (err) {
+        $("loginError").textContent = err.message;
+    }
+};
+
+// TAMPILKAN ADMIN
+function showAdmin() {
+    $("login").hidden = true;
+    $("dashboard").hidden = false;
+
+    loadOverview();
+
+    const now = new Date();
+    const first = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    $("dateFrom").value = first.toLocaleDateString("en-CA");
+    $("dateTo").value = now.toLocaleDateString("en-CA");
+}
+
+// RINGKASAN
+async function loadOverview() {
+    try {
+        const [s, a] = await Promise.all([
+            call("/api/summary"),
+            call("/api/admin/adjustments")
+        ]);
+
+        $("totalBalance").textContent = fmt(s.data.balance);
+        $("totalIncome").textContent = fmt(s.data.income);
+        $("totalExpense").textContent = fmt(s.data.expense);
+
+        $("adjustments").innerHTML = (a.data || [])
+            .slice(0, 8)
+            .map(x => `
+                <div class="row">
+                    <span>
+                        ${esc(x.description)}
+                        <small>
+                            ${esc(x.adjustment_date)}
+                            · ${esc(x.profile || "Suami")}
+                            · ${x.type === "add" ? "Tambah saldo" : "Tarik saldo"}
+                        </small>
+                    </span>
+                    <b>${x.type === "add" ? "+" : "−"}${fmt(x.amount)}</b>
+                </div>
+            `).join("") || "<p>Belum ada penyesuaian saldo.</p>";
+
+    } catch (e) {
+        $("globalError").textContent = e.message;
+
+        if (e.message.includes("Sesi admin")) {
+            logout();
+        }
+    }
+}
+
+// NAVIGASI TAB
+document.querySelectorAll("nav [data-tab]").forEach(b => {
+    b.onclick = () => {
+        document.querySelectorAll("nav [data-tab]")
+            .forEach(x => x.classList.toggle("active", x === b));
+
+        document.querySelectorAll(".tab")
+            .forEach(x => x.hidden = x.id !== b.dataset.tab);
+
+        if (b.dataset.tab === "overview") {
+            loadOverview();
+        }
+    };
+});
+
+// TANGGAL DEFAULT
+$("adjustDate").value = new Date().toLocaleDateString("en-CA");
+
+// TAMBAH / TARIK SALDO
+$("adjustForm").onsubmit = async e => {
+    e.preventDefault();
+
+    $("adjustMsg").textContent = "";
+
+    const profile = $("adjustProfile").value;
+    const type = $("adjustType").value;
+    const amount = Number($("adjustAmount").value);
+
+    if (!["Suami", "Istri"].includes(profile)) {
+        $("adjustMsg").textContent = "Profil tidak valid.";
+        return;
+    }
+
+    if (!["add", "withdraw"].includes(type) || amount <= 0) {
+        $("adjustMsg").textContent = "Jenis atau nominal tidak valid.";
+        return;
+    }
+
+    try {
+        await call("/api/admin/adjustments", {
+            method: "POST",
+            body: JSON.stringify({
+                type,
+                profile,
+                amount,
+                description: $("adjustDesc").value,
+                adjustment_date: $("adjustDate").value
+            })
+        });
+
+        $("adjustMsg").textContent =
+            `Penyesuaian saldo ${profile} berhasil disimpan.`;
+
+        $("adjustForm").reset();
+
+        $("adjustProfile").value = profile;
+        $("adjustType").value = "add";
+        $("adjustDate").value = new Date().toLocaleDateString("en-CA");
+
+        loadOverview();
+
+    } catch (err) {
+        $("adjustMsg").textContent = err.message;
+    }
+};
+
+// LAPORAN
+$("runReport").onclick = loadReport;
+
+async function loadReport() {
+    try {
+        const d = await call(
+            `/api/admin/transactions?from=${$("dateFrom").value}&to=${$("dateTo").value}`
+        );
+
+        lastRows = d.data || [];
+
+        const income = lastRows
+            .filter(x => x.type === "income")
+            .reduce((s, x) => s + Number(x.amount), 0);
+
+        const expense = lastRows
+            .filter(x => x.type === "expense")
+            .reduce((s, x) => s + Number(x.amount), 0);
+
+        $("reportTotals").innerHTML = `
+            <p>
+                <b>Pemasukan:</b> ${fmt(income)}
+                &nbsp;
+                <b>Pengeluaran:</b> ${fmt(expense)}
+                &nbsp;
+                <b>Selisih:</b> ${fmt(income - expense)}
+            </p>
+        `;
+
+        $("reportRows").innerHTML = `
+            <table class="reporttable">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Profil</th>
+                        <th>Keterangan</th>
+                        <th>Jenis</th>
+                        <th>Nominal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${lastRows.map(x => `
+                        <tr>
+                            <td>${esc(x.transaction_date)}</td>
+                            <td>${esc(x.profile || "-")}</td>
+                            <td>${esc(x.description)}</td>
+                            <td>
+                                ${x.type === "income" ? "Pemasukan" : "Pengeluaran"}
+                            </td>
+                            <td>${fmt(x.amount)}</td>
+                        </tr>
+                    `).join("")}
+                </tbody>
+            </table>
+        `;
+
+    } catch (e) {
+        $("reportRows").textContent = e.message;
+    }
+}
+
+// EKSPOR CSV
+$("csv").onclick = () => {
+    if (!lastRows.length) {
+        alert("Belum ada data laporan.");
+        return;
+    }
+
+    const rows = [
+        ["Tanggal", "Profil", "Keterangan", "Jenis", "Kategori", "Nominal"],
+        ...lastRows.map(x => [
+            x.transaction_date,
+            x.profile,
+            x.description,
+            x.type,
+            x.category_name,
+            x.amount
+        ])
+    ];
+
+    const csv = rows.map(r =>
+        r.map(v => '"' + String(v ?? "").replace(/"/g, '""') + '"')
+            .join(",")
+    ).join("\r\n");
+
+    const a = document.createElement("a");
+
+    a.href = URL.createObjectURL(
+        new Blob(["\ufeff" + csv], {
+            type: "text/csv;charset=utf-8"
+        })
+    );
+
+    a.download = "laporan-myfinance.csv";
+    a.click();
+
+    URL.revokeObjectURL(a.href);
+};
+
+// LOGOUT
+$("logout").onclick = logout;
+
+async function logout() {
+    try {
+        await call("/api/admin/logout", {
+            method: "POST"
+        });
+    } catch {}
+
+    token = "";
+
+    sessionStorage.removeItem("mf_admin_token");
+
+    $("dashboard").hidden = true;
+    $("login").hidden = false;
+}
+
+// ESCAPE HTML
+function esc(s) {
+    return String(s ?? "").replace(/[&<>"']/g, c => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    }[c]));
+}
+
+// CEK SESI
+if (token) {
+    showAdmin();
+}
