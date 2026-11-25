@@ -1,0 +1,14 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0f172a"><title>Admin MyFinance</title><link rel="stylesheet" href="../assets/css/admin.css"></head><body><main class="shell">
+<header><div><a href="../">← Kembali ke Chat</a><h1>MyFinance Admin</h1><p>Pengelolaan saldo dan laporan keluarga</p></div></header>
+<section id="login" class="card login"><h2>Masuk Admin</h2><p>Masukkan PIN admin.</p><form id="loginForm"><input id="pin" type="password" inputmode="numeric" placeholder="PIN admin" required><button class="btn">Masuk</button></form><p id="loginError" class="error"></p></section>
+<div id="dashboard" hidden>
+<nav><button data-tab="overview" class="active">Ringkasan</button><button data-tab="balance">Tambah / Tarik Saldo</button><button data-tab="report">Laporan</button><button id="logout" class="logout">Keluar</button></nav>
+<section id="overview" class="tab card"><h2>Ringkasan Keuangan</h2><div class="stats"><div><small>Saldo keluarga</small><strong id="totalBalance">Rp0</strong></div><div><small>Pemasukan transaksi</small><strong id="totalIncome">Rp0</strong></div><div><small>Pengeluaran transaksi</small><strong id="totalExpense">Rp0</strong></div></div><h3>Penyesuaian saldo terbaru</h3><div id="adjustments"></div></section>
+<section id="balance" class="tab card" hidden><h2>Tambah atau tarik saldo</h2><p class="muted">Penambahan/penarikan saldo dicatat terpisah, bukan sebagai pemasukan/pengeluaran biasa.</p><form id="adjustForm" class="formgrid">
+<label>Jenis<select id="adjustType"><option value="add">Tambah saldo</option><option value="withdraw">Tarik saldo</option></select></label>
+<label>Nominal (Rp)<input id="adjustAmount" type="number" min="1" required></label>
+<label class="wide">Keterangan<input id="adjustDesc" placeholder="Contoh: Setoran awal / tarik tunai" required></label>
+<label>Tanggal<input id="adjustDate" type="date" required></label>
+<button class="btn wide">Simpan Penyesuaian</button></form><p id="adjustMsg" class="error"></p></section>
+<section id="report" class="tab card" hidden><h2>Laporan Transaksi</h2><div class="filters"><label>Dari<input id="dateFrom" type="date"></label><label>Sampai<input id="dateTo" type="date"></label><button id="runReport" class="btn">Tampilkan</button><button id="csv" class="btn light">Ekspor CSV</button><button onclick="window.print()" class="btn light">Cetak / PDF</button></div><div id="reportTotals"></div><div id="reportRows"></div></section>
+<p id="globalError" class="error"></p></div></main><script src="../assets/js/admin.js"></script></body></html>
